@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>エネ管 暗記デッキ</title>
+<meta name="theme-color" content="#1f3a5f">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="エネ管暗記">
+<style>
+  :root{
+    --navy:#1f3a5f; --good:#0f9d58; --hard:#d99413; --again:#cf4b46;
+    --I:#b07d12; --Isoft:#fdf3e1; --II:#1f6fb2; --IIsoft:#e9f2fb;
+    --III:#6d3fc4; --IIIsoft:#f0eafb; --IV:#0e8a7d; --IVsoft:#e4f5f1;
+    --bg:#f4f5f3; --ink:#1f2d3d; --mut:#6b7886; --line:#e6e9ec;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI","Yu Gothic",system-ui,sans-serif;
+    -webkit-text-size-adjust:100%; padding-top:env(safe-area-inset-top);
+  }
+  #app{max-width:760px;margin:0 auto;padding:16px 16px 72px}
+  button{font-family:inherit}
+  .hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .logo{width:34px;height:34px;border-radius:9px;background:var(--navy);display:grid;place-items:center;color:#fff;font-size:18px}
+  .title{font-weight:800;font-size:17px;letter-spacing:.02em}
+  .sub{font-size:11.5px;color:var(--mut)}
+  .back{background:#fff;border:1px solid var(--line);border-radius:9px;width:36px;height:36px;display:grid;place-items:center;cursor:pointer;color:var(--navy);font-size:20px}
+  .save-dot{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px}
+  .dot{width:8px;height:8px;border-radius:99px;background:var(--good)}
+
+  .hero{background:var(--navy);color:#fff;border-radius:16px;padding:18px 18px 16px;margin-bottom:14px}
+  .hero .lab{font-size:12.5px;opacity:.85;font-weight:600}
+  .hero .num{font-size:44px;font-weight:800;line-height:1}
+  .btn{border:none;border-radius:12px;padding:13px 14px;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+  .btn-light{background:#fff;color:var(--navy)}
+  .btn-navy{background:var(--navy);color:#fff}
+  .btn-soft{background:#eef1f4;color:var(--navy)}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .scard{background:#fff;border-radius:14px;padding:13px;border:1px solid var(--line)}
+  .chip{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;display:inline-block}
+  .sname{font-size:12.5px;color:#5b6877;margin:4px 0 8px;min-height:16px}
+  .bignum{font-size:24px;font-weight:800}
+  .barwrap{height:5px;background:#eef1f4;border-radius:99px;margin:8px 0 10px;overflow:hidden}
+  .bar{height:100%}
+  .smbtn{border:none;border-radius:9px;padding:9px 10px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+  .row{display:flex;gap:6px}
+  .footbtns{display:flex;gap:10px;margin-top:14px}
+  .rowbtn{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;font-weight:700;font-size:14px;color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+
+  .pips{display:inline-flex;align-items:center}
+  .pip{width:7px;height:7px;border-radius:2px;margin-right:3px;background:#d9dee5}
+
+  .revmeta{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:#7a8794}
+  .face{width:100%;text-align:left;background:#fff;border:1px solid #e3e7eb;border-radius:16px;padding:22px 20px;cursor:pointer;min-height:230px;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(20,40,70,.05)}
+  .qtext{font-size:19px;font-weight:700;line-height:1.5}
+  .hint{margin-top:auto;padding-top:18px;font-size:12.5px;color:#9aa6b2}
+  .ans{margin-top:16px;padding-top:16px;border-top:1px dashed #d7dde3}
+  .ans .l{font-size:11px;font-weight:700;margin-bottom:6px}
+  .ans .t{font-size:17px;line-height:1.65;color:#243240}
+  .grades{display:flex;gap:8px;margin-top:12px}
+  .gbtn{flex:1;background:#fff;border-radius:13px;padding:12px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:700;border-width:1.5px;border-style:solid}
+  .gbtn .ic{font-size:18px;line-height:1}
+  .gbtn .lb{font-size:14px}
+  .gbtn .sb{font-size:10.5px;opacity:.85;font-weight:600}
+
+  .done{background:#fff;border-radius:16px;padding:26px;text-align:center;border:1px solid var(--line)}
+  .done .circle{width:56px;height:56px;border-radius:99px;background:#e8f6ee;display:grid;place-items:center;margin:0 auto 12px;color:var(--good);font-size:28px}
+
+  .searchbar{flex:1;display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #e3e7eb;border-radius:11px;padding:8px 11px}
+  .searchbar input{border:none;outline:none;flex:1;font-size:14px;background:transparent;font-family:inherit}
+  .filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .fchip{font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:999px;cursor:pointer;border:1px solid #dde2e7;background:#fff;color:#5b6877}
+  .clist{display:flex;flex-direction:column;gap:8px}
+  .crow{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+  .crow .top{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+  .crow .topic{font-size:11px;color:#9aa6b2}
+  .crow .q{font-size:14.5px;font-weight:600;line-height:1.45}
+  .crow .a{font-size:13px;color:#54616e;line-height:1.55;margin-top:3px}
+  .miniic{background:transparent;border:none;cursor:pointer;padding:4px;font-size:14px;line-height:1}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+  label.lbl{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:0 0 5px}
+  .inp,.ta{width:100%;border:1px solid #dde2e7;border-radius:9px;padding:9px 11px;font-size:14px;margin-bottom:12px;outline:none;font-family:inherit}
+  .ta{resize:vertical;line-height:1.5}
+  .subbtns{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .subbtn{font-size:13px;font-weight:700;padding:7px 12px;border-radius:9px;cursor:pointer;border:1px solid #dde2e7;background:#fff;color:#5b6877}
+
+  .setrow{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px}
+  .setrow .ic{font-size:18px}
+  .setrow .ti{font-weight:700;font-size:14px}
+  .setrow .de{font-size:12px;color:#8a96a3;line-height:1.4}
+  .note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+  .note ul{margin:0;padding-left:18px;font-size:13px;color:#54616e;line-height:1.7}
+  .stack{display:flex;flex-direction:column;gap:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ====================================================================
+   エネ管 暗記デッキ — 単体オフラインPWA（依存ゼロ・バニラJS・localStorage）
+   ==================================================================== */
+const STORE_KEY = "enekan_anki_v1";
+const SUBJECTS = {
+  I:  {label:"課目I",  name:"総合管理・法規", color:"var(--I)",  soft:"var(--Isoft)"},
+  II: {label:"課目II", name:"電気の基礎",     color:"var(--II)", soft:"var(--IIsoft)"},
+  III:{label:"課目III",name:"設備・機器",     color:"var(--III)",soft:"var(--IIIsoft)"},
+  IV: {label:"課目IV", name:"電力応用",       color:"var(--IV)", soft:"var(--IVsoft)"},
+};
+const ORDER = ["I","II","III","IV"];
+const BOX_DAYS = {1:1,2:2,3:4,4:8,5:15};
+const MAXBOX = 5;
+
+/* ---- 初期98枚（課目Iを本丸に、II/III/IVの暗記層） ---- */
+const SEED = [
+  ["I-01","I","省エネ法","省エネ法の正式名称（2023年改正後）は？","エネルギーの使用の合理化及び非化石エネルギーへの転換等に関する法律"],
+  ["I-02","I","省エネ法","省エネ法の制定年と契機は？","1979年（昭和54年）。第一次石油危機（オイルショック）が契機"],
+  ["I-03","I","指定区分","「特定事業者」の指定基準は？","事業者全体の年間エネルギー使用量が原油換算 1,500 kL/年度 以上"],
+  ["I-04","I","指定区分","第一種エネルギー管理指定工場等の基準は？","年間使用量が原油換算 3,000 kL/年度 以上"],
+  ["I-05","I","指定区分","第二種エネルギー管理指定工場等の基準は？","原油換算 1,500 kL 以上 3,000 kL 未満/年度"],
+  ["I-06","I","選任","エネルギー管理者の選任義務がある対象は？","第一種指定工場のうち、製造業・鉱業・電気供給業・ガス供給業・熱供給業の5業種"],
+  ["I-07","I","選任","エネルギー管理員を選任する対象は？","上記5業種以外の第一種指定工場、および第二種指定工場"],
+  ["I-08","I","選任","エネルギー管理統括者を実務で補佐する者は？","エネルギー管理企画推進者（エネルギー管理士免状の所有者または研修修了者）"],
+  ["I-09","I","資格","エネルギー管理士免状を得る2つの道は？","①管理士試験に合格し実務1年以上、②エネルギー管理研修を修了"],
+  ["I-10","I","2023改正","2023年改正の2本柱は？","①エネルギー使用の合理化（省エネ）、②化石→非化石エネルギーへの転換"],
+  ["I-11","I","2023改正","「電気需要平準化」は何に変わったか？","「電気需要最適化」。需給に応じた上げDR／下げDR（ディマンドリスポンス）で最適化"],
+  ["I-12","I","2023改正","上げDR・下げDRの意味は？","上げDR=再エネ余剰時に需要を増やす／下げDR=需給逼迫時に需要を抑える"],
+  ["I-13","I","義務","エネルギー消費原単位の努力目標は？","中長期的にみて年平均 1% 以上の低減"],
+  ["I-14","I","義務","工場等判断基準とは？","事業者が守るべき省エネ措置の基準。管理標準の設定・運用などを定める"],
+  ["I-15","I","制度","ベンチマーク制度とは？","業種ごとに定めた目標水準と各社の省エネ状況を比較・評価する制度"],
+  ["I-16","I","制度","トップランナー制度とは？","市場で最も省エネ性能の高い機器を基準に、各社の達成すべき基準を設定する制度"],
+  ["I-17","I","換算","原油換算係数（標準）は？","1 kL（原油）= 38.2 GJ（= 0.0258 kL/GJ）"],
+  ["I-18","I","基礎","一次／二次エネルギーの違いは？","一次=自然から直接（石油・石炭・天然ガス・原子力・水力・再エネ）／二次=加工後（電気・都市ガス・ガソリン等）"],
+  ["I-19","I","燃焼","空気比（過剰空気率）m の定義は？","m = 実際の空気量 ÷ 理論空気量（完全燃焼で m>1）"],
+  ["I-20","I","燃焼","高位発熱量HHVと低位発熱量LHVの違いは？","HHVは生成水蒸気の凝縮潜熱を含む。LHVは含まない（HHV>LHV）"],
+  ["I-21","I","管理","負荷率の定義は？","負荷率 = 平均需要電力 ÷ 最大需要電力"],
+  ["I-22","I","管理","需要率の定義は？","需要率 = 最大需要電力 ÷ 設備容量の合計"],
+  ["I-23","I","管理","不等率の定義は？","不等率 = 各負荷の最大需要電力の総和 ÷ 合成最大需要電力（≥ 1）"],
+  ["I-24","I","管理","デマンド管理の狙いは？","ピーク電力を抑え、契約電力・基本料金を下げる"],
+  ["I-25","I","管理","力率改善の主目的は？","無効電力を減らし、線路損失・電圧降下を低減、設備容量に余裕を生む"],
+  ["I-26","I","経済","単純回収年数の式は？","単純回収年数 = 初期投資額 ÷ 年間節減額"],
+  ["I-27","I","経済","現在価値（割引）の考え方は？","将来の金額を割引率で割り引き、現在の価値に換算して評価する"],
+  ["I-28","I","時事","日本のエネルギー自給率は？（白書2025）","約 15.3%（2023年度・G7で最低水準）。※白書改訂で更新／要確認"],
+  ["I-29","I","時事","発電電力量に占める再エネ比率は？","約 22.9%（2023年度）。※要確認"],
+  ["I-30","I","時事","第7次エネルギー基本計画の再エネ目標は？","2030年度に再エネ 36〜38%。2040年度見通しで再エネ4〜5割・自給率3〜4割"],
+  ["I-31","I","基礎","カーボンニュートラルの定義は？","温室効果ガスの排出量と吸収・除去量を均衡させ、実質ゼロにすること"],
+
+  ["II-01","II","ラプラス","L[1] = ?","1/s"],
+  ["II-02","II","ラプラス","L[t] = ?","1/s²"],
+  ["II-03","II","ラプラス","L[e^(−at)] = ?","1/(s+a)"],
+  ["II-04","II","ラプラス","L[sin ωt] = ?","ω/(s²+ω²)"],
+  ["II-05","II","ラプラス","L[cos ωt] = ?","s/(s²+ω²)"],
+  ["II-06","II","ラプラス","微分 L[df/dt] = ?","sF(s) − f(0)"],
+  ["II-07","II","ラプラス","積分 L[∫f dt] = ?","F(s)/s"],
+  ["II-08","II","ラプラス","最終値の定理は？","lim(t→∞) f(t) = lim(s→0) sF(s)　（極が左半面にあるとき）"],
+  ["II-09","II","ラプラス","初期値の定理は？","lim(t→0⁺) f(t) = lim(s→∞) sF(s)"],
+  ["II-10","II","実効値","正弦波の実効値は？","最大値 ÷ √2（≒ 0.707 × 最大値）"],
+  ["II-11","II","実効値","全振幅 ±Vm の方形波の実効値は？","Vm（最大値そのもの）。÷√2 ではない"],
+  ["II-12","II","制御","制御系の「型(type)」とは？","開ループ伝達関数の原点 s=0 にある積分要素 1/s の個数（分母の次数ではない）"],
+  ["II-13","II","制御","型と定常偏差の関係は？","型が高いほど定常偏差は小さい。ステップ入力なら1型以上で偏差0"],
+  ["II-14","II","制御","s平面での安定条件は？","すべての極の実部が負（= 左半面にある）"],
+  ["II-15","II","制御","一次遅れ 1/(1+Ts) の時定数Tの意味は？","出力が最終値の約 63.2% に達するまでの時間"],
+  ["II-16","II","制御","位相余裕・ゲイン余裕とは？","安定度の指標。位相余裕=位相が−180°になる手前の余裕／ゲイン余裕=ゲインが0dBになる手前の余裕"],
+  ["II-17","II","回路","コンデンサのインピーダンスは？","1/(jωC)（ラプラスでは 1/(Cs)）"],
+  ["II-18","II","回路","インダクタのインピーダンスは？","jωL（ラプラスでは Ls）"],
+  ["II-19","II","オペアンプ","仮想短絡（バーチャルショート）とは？","理想オペアンプで2入力が同電位、入力電流 ≒ 0 とみなせること"],
+  ["II-20","II","情報処理","RAID 0/1/5 の特徴は？","0=ストライピング（高速・冗長なし）、1=ミラーリング（二重化）、5=パリティ分散（1台故障に耐える）"],
+  ["II-21","II","情報処理","1バイトは何ビット／16進1桁は？","1バイト=8ビット。16進1桁=4ビット分"],
+  ["II-22","II","論理","ド・モルガンの法則は？","¬(A∧B)=¬A∨¬B、　¬(A∨B)=¬A∧¬B"],
+
+  ["III-01","III","変圧器","%インピーダンス %Z の意味は？","定格電流時の内部電圧降下が定格電圧に占める割合 [%]"],
+  ["III-02","III","変圧器","%Z から短絡電流 Is を求める式は？","Is = 定格電流 In × (100/%Z)"],
+  ["III-03","III","変圧器","変圧器の2つの損失は？","無負荷損（鉄損：ほぼ一定）と負荷損（銅損：負荷電流の2乗に比例）"],
+  ["III-04","III","変圧器","最大効率になる条件は？","鉄損 = 銅損（無負荷損 = 負荷損）のとき"],
+  ["III-05","III","変圧器","電圧変動率の意味は？","無負荷時と定格負荷時の二次端子電圧の差を、定格電圧で割った割合"],
+  ["III-06","III","変圧器","Δ-Y 結線の特徴は？","二次側に中性点が取り出せる。一次・二次で位相が30°ずれる"],
+  ["III-07","III","誘導機","すべり s の定義は？","s = (Ns − N)/Ns（Ns=同期速度, N=回転速度）"],
+  ["III-08","III","誘導機","同期速度 Ns の式は？","Ns = 120f/p [min⁻¹]（f=周波数, p=極数）"],
+  ["III-09","III","誘導機","二次入力 : 二次銅損 : 機械出力 の比は？","1 : s : (1−s)"],
+  ["III-10","III","直流機","直流機の誘導起電力 E は何に比例？","磁束Φと回転速度Nの積（E ∝ ΦN）"],
+  ["III-11","III","同期機","電機子反作用は力率でどう変わる？","遅れ力率=減磁、進み力率=増磁、力率1=交差磁化"],
+  ["III-12","III","パワエレ","単相全波整流（抵抗負荷）の直流平均電圧は？","Ed = 2√2·E/π ≒ 0.9E（E=交流実効値）"],
+  ["III-13","III","パワエレ","サイリスタの位相制御とは？","点弧角 α を変えて出力電圧の平均値を制御する方式"],
+  ["III-14","III","照明","光束・照度・光度・輝度の単位は？","光束=lm、照度=lx(=lm/m²)、光度=cd、輝度=cd/m²"],
+  ["III-15","III","設備","遮断器(CB)と断路器(DS)の違いは？","CBは負荷電流・短絡電流を遮断可。DSは無負荷時のみ開閉（電流遮断不可）"],
+  ["III-16","III","設備","接地の目的は？","感電防止・機器保護・電位の安定化"],
+  ["III-17","III","電力","三相電力 P の式（線間V・線電流I）は？","P = √3·V·I·cosθ"],
+  ["III-18","III","設備","進相用電力コンデンサの目的は？","遅れ無効電力を補償して力率を改善する"],
+  ["III-19","III","誘導機","かご形と巻線形の違いは？","かご形=構造簡単・堅牢／巻線形=二次抵抗を外部接続でき始動・速度制御に有利"],
+
+  ["IV-01","IV","負荷の型","定トルク負荷の動力は速度にどう効く？","トルク一定 → P ∝ ω（1乗）。例: 巻上機・クレーン・コンベヤ・エレベータ"],
+  ["IV-02","IV","負荷の型","定出力負荷の特徴は？","動力 P 一定 → T ∝ 1/ω"],
+  ["IV-03","IV","負荷の型","二乗低減トルク負荷（流体機械）は？","T ∝ ω²、P ∝ ω³。例: ファン・ブロワ・ポンプ"],
+  ["IV-04","IV","負荷の型","転移ルール（暗記でなく1本で）は？","動力はトルクより指数が必ず1つ上（P = Tω だから）"],
+  ["IV-05","IV","電動力","軸動力 P の式は？","P = Tω（T=トルク[N·m], ω=角速度[rad/s]）。所要入力は P/η"],
+  ["IV-06","IV","電動力","回転体の運動エネルギーは？","(1/2)Jω²（½mv² に v=Rω を入れたもの）。Jを出したら最後に必ず½を付ける"],
+  ["IV-07","IV","電動力","はずみ車効果 GD² と慣性 J の関係は？","J = GD²/4"],
+  ["IV-08","IV","電動力","起動（加速）時間 t の式は？","t = Jω / T_net（T_net = 駆動トルク − 負荷トルク）"],
+  ["IV-09","IV","電動力","巻上機の所要動力は？","P = mgv/η（m=質量, v=巻上速度, η=効率）"],
+  ["IV-10","IV","電動力","ポンプの所要動力は？","P = 9.8·Q·H/η [kW]（Q=[m³/s], H=全揚程[m]）"],
+  ["IV-11","IV","電動力","送風機の相似則は？","回転数Nに対し Q∝N、H∝N²、P∝N³"],
+  ["IV-12","IV","電熱","抵抗加熱の原理は？","電流のジュール熱 I²R を利用（電気炉など）"],
+  ["IV-13","IV","電熱","誘導加熱の原理は？","交番磁界が導体に渦電流を誘導し、被加熱物自体が発熱（金属の加熱・溶解）"],
+  ["IV-14","IV","電熱","誘電加熱の原理は？","高周波電界で誘電体内部の分子が振動・摩擦して発熱（プラスチック・食品）"],
+  ["IV-15","IV","電熱","アーク加熱の原理は？","アーク放電の高温を利用（アーク炉・製鋼）"],
+  ["IV-16","IV","電熱","表皮効果と誘導加熱の関係は？","高周波ほど電流が表面に集中 → 表面焼入れに利用。浸透深さは周波数が高いほど浅い"],
+  ["IV-17","IV","電熱","ステファン・ボルツマンの法則は？","放射エネルギー ∝ 絶対温度の4乗（T⁴）"],
+  ["IV-18","IV","電熱","熱の伝わり方3種は？","伝導・対流・放射"],
+  ["IV-19","IV","電熱","1 Wh は何 J か？","1 Wh = 3600 J（1 W = 1 J/s）"],
+  ["IV-20","IV","照明","光束法による平均照度 E の式は？","E = (F·N·U·M)/A（F=ランプ光束, N=灯数, U=照明率, M=保守率, A=面積）"],
+  ["IV-21","IV","照明","照明率 U とは？","光源の全光束のうち、作業面に到達する割合"],
+  ["IV-22","IV","照明","保守率 M とは？","経年劣化や汚れによる照度低下を見込む係数（M<1）"],
+  ["IV-23","IV","電気化学","ファラデーの電気分解の法則は？","析出量は通過電気量 Q=It に比例。1molの析出に必要な電気量 = 価数 × ファラデー定数"],
+  ["IV-24","IV","電気化学","ファラデー定数の値は？","約 96,500 C/mol（9.65×10⁴）"],
+  ["IV-25","IV","空調","ヒートポンプの成績係数 COP とは？","COP = 得られた熱量(or冷却量) ÷ 投入電力（1より大きい）"],
+  ["IV-26","IV","空調","顕熱と潜熱の違いは？","顕熱=温度変化に使う熱／潜熱=相変化（蒸発・凝縮＝加湿・除湿）に使う熱"],
+];
+
+/* ---------- ユーティリティ ---------- */
+const esc = (s)=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function todayStr(){const d=new Date();d.setHours(0,0,0,0);return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10);}
+function addDaysStr(n){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+n);return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,10);}
+const isDue=(c)=>c.due==null||c.due<=todayStr();
+const seedDeck=()=>SEED.map(([id,subject,topic,front,back])=>({id,subject,topic,front,back,box:1,due:null,seen:0}));
+
+/* ---------- 永続化（localStorage） ---------- */
+let saveOK=true;
+function load(){try{const r=localStorage.getItem(STORE_KEY);if(r)return JSON.parse(r);}catch(e){}return seedDeck();}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(deck));saveOK=true;}catch(e){saveOK=false;}}
+
+/* ---------- 状態 ---------- */
+let deck = load();
+let st = {view:"home", queue:[], pos:0, flipped:false, stats:{good:0,hard:0,again:0}, drill:false,
+          filterSub:"all", search:"", editing:null, editSub:"I", confirm:null};
+
+function counts(){
+  const c={}; ORDER.forEach(s=>c[s]={due:0,total:0,mastered:0});
+  deck.forEach(card=>{const b=c[card.subject];if(!b)return;b.total++;if(isDue(card))b.due++;if(card.box>=MAXBOX)b.mastered++;});
+  const dueAll=ORDER.reduce((a,s)=>a+c[s].due,0);
+  const mastered=ORDER.reduce((a,s)=>a+c[s].mastered,0);
+  return {c,dueAll,total:deck.length,mastered};
+}
+
+/* ---------- 復習 ---------- */
+function start(ids,drill){if(!ids.length)return;const q=[...ids].sort(()=>Math.random()-0.5);
+  st.queue=q;st.pos=0;st.flipped=false;st.stats={good:0,hard:0,again:0};st.drill=!!drill;st.view="review";render();}
+function startDue(sub){start(deck.filter(c=>isDue(c)&&(sub==="all"||c.subject===sub)).map(c=>c.id),false);}
+function startDrill(sub){start(deck.filter(c=>sub==="all"||c.subject===sub).map(c=>c.id),true);}
+function currentCard(){return st.pos<st.queue.length?deck.find(c=>c.id===st.queue[st.pos]):null;}
+function grade(kind){
+  const cur=currentCard(); if(!cur)return;
+  deck=deck.map(c=>{
+    if(c.id!==cur.id)return c;
+    let box=c.box,due;
+    if(kind==="again"){box=1;due=st.drill?c.due:todayStr();}
+    else if(kind==="hard"){box=Math.max(1,c.box);due=st.drill?c.due:addDaysStr(1);}
+    else{box=Math.min(MAXBOX,c.box+1);due=st.drill?c.due:addDaysStr(BOX_DAYS[box]);}
+    return {...c,box,due,seen:c.seen+1};
+  });
+  save();
+  st.stats[kind]++;
+  if(kind==="again")st.queue.push(cur.id);
+  st.pos++; st.flipped=false; render();
+}
+
+/* ---------- カード編集 ---------- */
+function saveCard(){
+  const topic=document.getElementById("f_topic").value.trim();
+  const front=document.getElementById("f_front").value.trim();
+  const back=document.getElementById("f_back").value.trim();
+  if(!front||!back)return;
+  const ed=st.editing;
+  if(ed && ed.id && deck.some(c=>c.id===ed.id)){
+    deck=deck.map(c=>c.id===ed.id?{...c,subject:st.editSub,topic,front,back}:c);
+  }else{
+    deck.push({id:"U-"+Date.now().toString(36),subject:st.editSub,topic,front,back,box:1,due:null,seen:0});
+  }
+  save(); st.editing=null; st.view="browse"; render();
+}
+function deleteCard(id){deck=deck.filter(c=>c.id!==id);save();render();}
+
+/* ---------- 設定操作 ---------- */
+function replenish(){const have=new Set(deck.map(c=>c.id));const add=seedDeck().filter(c=>!have.has(c.id));if(add.length){deck=deck.concat(add);save();}render();}
+function resetProgress(){deck=deck.map(c=>({...c,box:1,due:null,seen:0}));save();render();}
+function restoreDefault(){deck=seedDeck();save();render();}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(deck,null,1)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=url;a.download="enekan_deck_"+todayStr()+".json";document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},500);
+}
+function importJSON(input){
+  const file=input.files&&input.files[0]; if(!file)return;
+  const fr=new FileReader();
+  fr.onload=()=>{try{const data=JSON.parse(fr.result);
+    if(Array.isArray(data)&&data.every(c=>c.id&&c.front&&c.back)){deck=data.map(c=>({box:1,due:null,seen:0,...c}));save();st.view="home";render();}
+    else alert("形式が違うファイルです。");
+  }catch(e){alert("読み込めませんでした。");}};
+  fr.readAsText(file);
+}
+
+/* ====================================================================
+   描画
+   ==================================================================== */
+const pips=(box,color)=>`<span class="pips">${[1,2,3,4,5].map(b=>`<span class="pip" style="${b<=box?`background:${color}`:""}"></span>`).join("")}</span>`;
+const chip=(s)=>{const m=SUBJECTS[s];return `<span class="chip" style="background:${m.soft};color:${m.color};border:1px solid ${m.color}33">${m.label}</span>`;};
+
+function render(){
+  const app=document.getElementById("app");
+  let body="";
+  if(st.view==="home") body=viewHome();
+  else if(st.view==="review") body=currentCard()?viewReview():viewDone();
+  else if(st.view==="browse") body=viewBrowse();
+  else if(st.view==="edit") body=viewEdit();
+  else if(st.view==="settings") body=viewSettings();
+
+  app.innerHTML = header() + body;
+  bind();
+}
+
+function header(){
+  const showBack = st.view!=="home";
+  return `<div class="hd">
+    ${showBack?`<button class="back" data-act="home">‹</button>`:""}
+    <div class="logo">⚡</div>
+    <div><div class="title">エネ管 暗記デッキ</div><div class="sub">覚えるしかない層だけ・間隔反復</div></div>
+    <div class="save-dot" style="color:${saveOK?"#5a8f6b":"#b06"}">
+      <span class="dot" style="background:${saveOK?"var(--good)":"var(--again)"}"></span>${saveOK?"保存中":"未保存"}
+    </div></div>`;
+}
+
+function viewHome(){
+  const {c,dueAll,total,mastered}=counts();
+  const cards=ORDER.map(s=>{
+    const m=SUBJECTS[s],b=c[s];const pct=b.total?Math.round(b.mastered/b.total*100):0;
+    return `<div class="scard" style="border-top:3px solid ${m.color}">
+      ${chip(s)}
+      <div class="sname">${m.name}</div>
+      <div style="display:flex;align-items:baseline;gap:5px">
+        <span class="bignum" style="color:${b.due?m.color:"#9aa6b2"}">${b.due}</span>
+        <span style="font-size:11.5px;color:#8a96a3">/ ${b.total} 枚</span>
+      </div>
+      <div class="barwrap"><div class="bar" style="width:${pct}%;background:${m.color}"></div></div>
+      <div class="row">
+        <button class="smbtn" style="flex:1;background:${b.due?m.color:"#eef1f4"};color:${b.due?"#fff":"#aab4bf"}" data-act="due" data-s="${s}" ${b.due?"":"disabled"}>復習 ${b.due>0?"("+b.due+")":""}</button>
+        <button class="smbtn" style="background:${m.soft};color:${m.color}" data-act="drill" data-s="${s}" title="全部回す">↻</button>
+      </div></div>`;
+  }).join("");
+
+  return `<div class="hero">
+    <div class="lab">今日の復習</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin:2px 0 12px">
+      <span class="num">${dueAll}</span><span style="font-size:14px;opacity:.85">枚 期限到来</span></div>
+    ${dueAll>0
+      ? `<button class="btn btn-light" data-act="due" data-s="all">↻ 全科目をまとめて復習</button>`
+      : `<div style="font-size:13.5px;opacity:.9">✓ 今日のノルマは完了。下の ↻ ドリルで先取りもできる。</div>`}
+    <div style="font-size:11.5px;opacity:.8;margin-top:10px">全 ${total} 枚 ・ 定着(箱5) ${mastered} 枚</div>
+  </div>
+  <div class="grid">${cards}</div>
+  <div class="footbtns">
+    <button class="rowbtn" data-act="browse">☰ カード一覧・追加</button>
+    <button class="rowbtn" style="flex:0 0 auto;width:52px" data-act="settings">⚙</button>
+  </div>`;
+}
+
+function viewReview(){
+  const card=currentCard();const m=SUBJECTS[card.subject];
+  const remaining=st.queue.length-st.pos;
+  const prog=st.queue.length?Math.round(st.pos/st.queue.length*100):0;
+  const nextDay=BOX_DAYS[Math.min(MAXBOX,card.box+1)];
+  return `<div class="revmeta">
+      <span>残り ${remaining} 枚</span>
+      ${st.drill?`<span style="color:${m.color};font-weight:700">ドリル（進捗更新／期限据置）</span>`:""}
+      <span style="margin-left:auto">✕${st.stats.again} △${st.stats.hard} ○${st.stats.good}</span>
+    </div>
+    <div class="barwrap" style="margin-bottom:14px"><div class="bar" style="width:${prog}%;background:${m.color}"></div></div>
+    <button class="face" style="border-top:4px solid ${m.color}" data-act="flip">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        ${chip(card.subject)}<span style="font-size:11.5px;color:#8a96a3">${esc(card.topic)}</span>
+        <span style="margin-left:auto">${pips(card.box,m.color)}</span>
+      </div>
+      <div class="qtext">${esc(card.front)}</div>
+      ${st.flipped
+        ? `<div class="ans"><div class="l" style="color:${m.color}">こたえ</div><div class="t">${esc(card.back)}</div></div>`
+        : `<div class="hint">タップで答えを表示</div>`}
+    </button>
+    ${st.flipped?`<div class="grades">
+      <button class="gbtn" style="border-color:var(--again);color:var(--again)" data-act="grade" data-k="again"><span class="ic">✕</span><span class="lb">もう一度</span><span class="sb">また今日</span></button>
+      <button class="gbtn" style="border-color:var(--hard);color:var(--hard)" data-act="grade" data-k="hard"><span class="ic">−</span><span class="lb">あいまい</span><span class="sb">明日また</span></button>
+      <button class="gbtn" style="border-color:var(--good);color:var(--good)" data-act="grade" data-k="good"><span class="ic">✓</span><span class="lb">覚えた</span><span class="sb">+${nextDay}日後</span></button>
+    </div>`:""}`;
+}
+
+function viewDone(){
+  const s=st.stats;const tot=s.good+s.hard+s.again;const {dueAll}=counts();
+  return `<div class="done">
+    <div class="circle">✓</div>
+    <div style="font-size:19px;font-weight:800;margin-bottom:6px">セッション完了</div>
+    <div style="font-size:13.5px;color:#5b6877;margin-bottom:16px">${tot} 回採点 ・ ○${s.good} △${s.hard} ✕${s.again}</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      ${dueAll>0?`<button class="btn btn-navy" style="width:auto;padding:11px 18px" data-act="due" data-s="all">残り ${dueAll} 枚を続ける</button>`:""}
+      <button class="btn btn-soft" style="width:auto;padding:11px 18px" data-act="home">ホームへ</button>
+    </div></div>`;
+}
+
+function viewBrowse(){
+  const counts=ORDER.map(s=>deck.filter(c=>c.subject===s).length);
+  const filters=`<button class="fchip" data-act="filter" data-s="all" style="${st.filterSub==="all"?`background:var(--navy);color:#fff;border-color:var(--navy)`:""}">すべて (${deck.length})</button>`+
+    ORDER.map((s,i)=>`<button class="fchip" data-act="filter" data-s="${s}" style="${st.filterSub===s?`background:${SUBJECTS[s].color};color:#fff;border-color:${SUBJECTS[s].color}`:""}">${SUBJECTS[s].label} (${counts[i]})</button>`).join("");
+  return `<div style="display:flex;gap:8px;margin-bottom:10px">
+      <div class="searchbar">🔍<input id="searchbox" placeholder="検索（問い・答え・分野）" value="${esc(st.search)}"></div>
+      <button class="btn btn-navy" style="width:auto;padding:0 14px;gap:6px" data-act="add">＋ 追加</button>
+    </div>
+    <div class="filters">${filters}</div>
+    <div class="clist" id="clist">${listHTML()}</div>`;
+}
+function listHTML(){
+  const q=st.search.trim();
+  const rows=deck.filter(c=>{
+    if(st.filterSub!=="all"&&c.subject!==st.filterSub)return false;
+    if(q)return (c.front+c.back+c.topic).includes(q);
+    return true;
+  });
+  if(!rows.length)return `<div style="text-align:center;color:#9aa6b2;padding:30px;font-size:13px">該当なし</div>`;
+  return rows.map(c=>{const m=SUBJECTS[c.subject];return `<div class="crow" style="border-left:4px solid ${m.color}">
+    <div class="top">${chip(c.subject)}<span class="topic">${esc(c.topic)}</span>
+      <span style="margin-left:auto">${pips(c.box,m.color)}</span>
+      <button class="miniic" data-act="edit" data-id="${c.id}">✎</button>
+      <button class="miniic" data-act="del" data-id="${c.id}" style="color:#c0676a">🗑</button>
+    </div>
+    <div class="q">${esc(c.front)}</div><div class="a">${esc(c.back)}</div></div>`;}).join("");
+}
+
+function viewEdit(){
+  const ed=st.editing||{};
+  const subBtns=ORDER.map(s=>{const m=SUBJECTS[s];const on=st.editSub===s;
+    return `<button class="subbtn" data-act="editsub" data-s="${s}" style="${on?`border-color:${m.color};background:${m.soft};color:${m.color}`:""}">${m.label}</button>`;}).join("");
+  return `<div class="panel">
+    <div style="font-weight:800;font-size:16px;margin-bottom:14px">${ed.id?"カードを編集":"カードを追加"}</div>
+    <label class="lbl">課目</label><div class="subbtns" id="subbtns">${subBtns}</div>
+    <label class="lbl">分野（任意）</label><input class="inp" id="f_topic" value="${esc(ed.topic||"")}" placeholder="例: 変圧器">
+    <label class="lbl">問い（おもて）</label><textarea class="ta" id="f_front" rows="2">${esc(ed.front||"")}</textarea>
+    <label class="lbl">答え（うら）</label><textarea class="ta" id="f_back" rows="3">${esc(ed.back||"")}</textarea>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button class="btn btn-soft" data-act="browse">キャンセル</button>
+      <button class="btn btn-navy" data-act="savecard">保存</button>
+    </div></div>`;
+}
+
+function viewSettings(){
+  const cf=st.confirm;
+  return `<div class="stack">
+    <div class="note">
+      <div style="font-weight:800;font-size:15px;margin-bottom:4px">使い方のメモ</div>
+      <ul>
+        <li>○覚えた＝箱が1つ上がり次回が先に（最大15日後）。△＝明日また。✕＝今日もう一度。</li>
+        <li>「↻ドリル」は期限を無視して全部回す。直前期の総ざらい用（箱は更新、期限は据置）。</li>
+        <li>暗記の取りこぼし専用。<b>導出が要る所はPDFワークシート側</b>でやる。</li>
+        <li>進捗はこの端末に保存される。<b>別端末へ移すには下のバックアップ（書き出し→読み込み）</b>を使う。</li>
+        <li>法規の数値・時事（自給率15.3%・再エネ22.9%等）は白書改訂で動く。最新値で上書きを。</li>
+      </ul>
+    </div>
+    <div class="setrow"><div class="ic">⤓</div><div style="flex:1"><div class="ti">バックアップを書き出す</div><div class="de">カード＋進捗をJSONで保存（別端末へ移行・保険用）</div></div><button class="btn btn-navy" style="width:auto;padding:8px 14px" data-act="export">書き出す</button></div>
+    <div class="setrow"><div class="ic">⤒</div><div style="flex:1"><div class="ti">バックアップを読み込む</div><div class="de">書き出したJSONを取り込む（現在の内容は置き換わる）</div></div>
+      <label class="btn btn-soft" style="width:auto;padding:8px 14px;cursor:pointer">読み込む<input type="file" id="importfile" accept="application/json,.json" style="display:none"></label></div>
+    <div class="setrow"><div class="ic">＋</div><div style="flex:1"><div class="ti">不足カードを補充</div><div class="de">初期カードのうち今ない分だけ追加（自作は消えない）</div></div><button class="btn btn-navy" style="width:auto;padding:8px 14px" data-act="replenish">補充</button></div>
+    <div class="setrow"><div class="ic" style="color:var(--hard)">↻</div><div style="flex:1"><div class="ti">進捗だけリセット</div><div class="de">全カードを箱1・未学習に戻す（カードは残る）</div></div><button class="btn" style="width:auto;padding:8px 14px;background:var(--hard);color:#fff" data-act="confirm" data-c="progress">リセット</button></div>
+    <div class="setrow"><div class="ic" style="color:var(--again)">⚠</div><div style="flex:1"><div class="ti">初期状態に戻す</div><div class="de">自作カード・全進捗を消し初期98枚に戻す</div></div><button class="btn" style="width:auto;padding:8px 14px;background:var(--again);color:#fff" data-act="confirm" data-c="restore">戻す</button></div>
+    ${cf?`<div style="background:#fff;border:1px solid #cf4b4655;border-radius:12px;padding:14px">
+      <div style="font-size:13.5px;margin-bottom:10px">${cf==="progress"?"全カードの学習進捗を消去します。よろしいですか？":"自作カードと進捗をすべて消し、初期状態に戻します。よろしいですか？"}</div>
+      <div style="display:flex;gap:8px">
+        <button class="smbtn" style="flex:1;background:#eef1f4;color:#5b6877" data-act="cancelconfirm">やめる</button>
+        <button class="smbtn" style="flex:1;background:var(--again);color:#fff" data-act="doconfirm">実行する</button>
+      </div></div>`:""}
+  </div>`;
+}
+
+/* ---------- イベント結線 ---------- */
+function bind(){
+  document.querySelectorAll("[data-act]").forEach(el=>{
+    el.onclick=(e)=>{
+      const a=el.dataset.act;
+      if(a==="home"){st.view="home";st.editing=null;st.confirm=null;render();}
+      else if(a==="due"){startDue(el.dataset.s);}
+      else if(a==="drill"){startDrill(el.dataset.s);}
+      else if(a==="flip"){st.flipped=!st.flipped;render();}
+      else if(a==="grade"){grade(el.dataset.k);}
+      else if(a==="browse"){st.view="browse";st.editing=null;render();}
+      else if(a==="settings"){st.view="settings";st.confirm=null;render();}
+      else if(a==="filter"){st.filterSub=el.dataset.s;render();}
+      else if(a==="add"){st.editing={};st.editSub="I";st.view="edit";render();}
+      else if(a==="edit"){const c=deck.find(x=>x.id===el.dataset.id);st.editing={...c};st.editSub=c.subject;st.view="edit";render();}
+      else if(a==="del"){deleteCard(el.dataset.id);}
+      else if(a==="editsub"){st.editSub=el.dataset.s;
+        document.querySelectorAll("#subbtns .subbtn").forEach(b=>{
+          const s=b.dataset.s,m=SUBJECTS[s],on=s===st.editSub;
+          b.style.cssText=on?`border-color:${m.color};background:${m.soft};color:${m.color}`:"";
+        });}
+      else if(a==="savecard"){saveCard();}
+      else if(a==="export"){exportJSON();}
+      else if(a==="replenish"){replenish();}
+      else if(a==="confirm"){st.confirm=el.dataset.c;render();}
+      else if(a==="cancelconfirm"){st.confirm=null;render();}
+      else if(a==="doconfirm"){if(st.confirm==="progress")resetProgress();else restoreDefault();st.confirm=null;render();}
+    };
+  });
+  const sb=document.getElementById("searchbox");
+  if(sb)sb.oninput=()=>{st.search=sb.value;document.getElementById("clist").innerHTML=listHTML();bindList();};
+  const imp=document.getElementById("importfile");
+  if(imp)imp.onchange=()=>importJSON(imp);
+  bindList();
+}
+function bindList(){
+  document.querySelectorAll("#clist [data-act]").forEach(el=>{
+    el.onclick=()=>{const a=el.dataset.act;
+      if(a==="edit"){const c=deck.find(x=>x.id===el.dataset.id);st.editing={...c};st.editSub=c.subject;st.view="edit";render();}
+      else if(a==="del"){deleteCard(el.dataset.id);}
+    };
+  });
+}
+
+render();
+
+/* ---------- PWA: Service Worker 登録（httpsで配信した時だけ有効） ---------- */
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
