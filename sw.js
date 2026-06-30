@@ -1,5 +1,9 @@
-/* エネ管 暗記デッキ — オフライン用 Service Worker（キャッシュ優先） */
-const CACHE = "enekan-anki-v1";
+/* 電験三種 法規 暗記デッキ — Service Worker
+   ・自分(denken-houki)のキャッシュだけ管理し、エネ管など他アプリのキャッシュは絶対に消さない
+   ・同一オリジン以外には一切介入しない
+   ・HTMLはネット優先（最新を取得）、静的ファイルはキャッシュ優先 */
+const APP   = "denken-houki";
+const CACHE = APP + "-anki-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -15,21 +19,44 @@ self.addEventListener("install", (e) => {
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(
+        // ★自分のアプリ(denken-houki-*)の古い版だけ削除。他アプリのキャッシュは残す
+        keys.filter((k) => k.startsWith(APP + "-") && k !== CACHE).map((k) => caches.delete(k))
+      )
     ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
-  e.respondWith(
-    caches.match(e.request).then((hit) =>
-      hit ||
-      fetch(e.request).then((res) => {
+  const req = e.request;
+  if (req.method !== "GET") return;
+  // ★同一オリジン以外は素通り（他サイト・他アプリに干渉しない）
+  if (new URL(req.url).origin !== self.location.origin) return;
+
+  const isHTML =
+    req.mode === "navigate" ||
+    (req.headers.get("accept") || "").includes("text/html");
+
+  if (isHTML) {
+    e.respondWith(
+      fetch(req).then((res) => {
         const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+        caches.open(CACHE).then((c) => c.put("./index.html", copy)).catch(() => {});
         return res;
-      }).catch(() => caches.match("./index.html"))
-    )
-  );
+      }).catch(() =>
+        caches.match("./index.html").then((h) => h || caches.match("./"))
+      )
+    );
+  } else {
+    e.respondWith(
+      caches.match(req).then((hit) =>
+        hit ||
+        fetch(req).then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          return res;
+        }).catch(() => caches.match("./index.html"))
+      )
+    );
+  }
 });
